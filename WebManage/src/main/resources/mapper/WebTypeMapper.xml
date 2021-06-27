@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.webmanage.dao.WebTypeDao">
+
+    <select id="showWebType" resultType="com.ssm.webmanage.domain.TWebsiteType">
+        select * from t_website_type order by website_num desc;
+    </select>
+
+    <select id="getWebSiteType" resultType="com.ssm.webmanage.domain.TWebsiteType">
+        select * from t_website_type where typename = #{typeName};
+    </select>
+
+    <update id="updateWebSite">
+        update t_website_type set website_num = #{website_num} where id = #{id};
+    </update>
+
+
+</mapper>

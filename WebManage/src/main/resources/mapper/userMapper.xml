@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.webmanage.dao.TUserDao">
+    <select id="login" resultType="com.ssm.webmanage.domain.User">
+        select * from rootuser;
+    </select>
+
+    <select id="showUserWeb" resultType="com.ssm.webmanage.domain.TUser">
+        select * from t_user order by website_num;
+    </select>
+
+    <!--用户访问-->
+    <select id="selectUserAccess" resultType="com.ssm.webmanage.domain.TUser">
+        select * from t_user where username = #{userName};
+    </select>
+<!--    用户访问量变更-->
+    <update id="userAccess">
+        update t_user set website_access_num = #{website_access_num} where id = #{id};
+    </update>
+
+    <update id="updateUserWeb">
+        update t_user set website_num = #{website_num} where id = #{id};
+    </update>
+
+
+    <select resultType="com.ssm.webmanage.domain.WebList" id="showWeb">
+        select w.id,w.name,w.url,twt.typename,w.access_num,w.last_access_date,w.create_date,u.username
+        from t_website w inner join t_user u on u.id = w.create_user_id inner join
+        t_website_type twt on w.type_id = twt.id  order by w.access_num desc limit #{realPage},#{pageSize};
+    </select>
+
+    <select id="getDataNumber" resultType="Integer">
+        select count(*) from t_website;
+    </select>
+
+    <select id="selectOneWeb" resultType="com.ssm.webmanage.domain.WebList">
+        select w.id,w.name,w.url,twt.typename,w.access_num,w.last_access_date,w.create_date,u.username
+        from t_website w inner join t_user u on u.id = w.create_user_id inner join
+        t_website_type twt on w.type_id = twt.id where w.id = #{id}
+    </select>
+
+
+
+
+
+
+
+
+
+
+
+    <!--查询所有的tuser-->
+    <select id="selectTUser" resultType="String">
+        select username from t_user;
+    </select>
+    <!--查询所有的websitetype-->
+    <select id="selectWebSiteType" resultType="String">
+        select typename from t_website_Type;
+    </select>
+
+<!--    &lt;!&ndash;修改网页&ndash;&gt;-->
+<!--    <update id="updateWeb">-->
+<!--        update t_website set name = #{name},url=#{url},type_id=(select id from t_website_type where typename = #{typeName}),-->
+<!--        access_num=access_num,last_access_date=#{last_access_date},create_date=#{create_date},-->
+<!--        create_user_id=(select id from t_user where username = #{userName}) where id = #{id};-->
+<!--    </update>-->
+
+    <!--新建网页-->
+    <insert id="insertWeb">
+        insert into t_website values(#{id},#{name},#{url},(select id from t_website_type where typename = #{typeName}),#{access_num},
+        #{last_access_date},#{create_date},(select id from t_user where username=#{userName}));
+
+    </insert>
+
+    <!--模糊查询-->
+    <select id="selectLike" resultType="com.ssm.webmanage.domain.WebList">
+        select w.id,w.name,w.url,twt.typename,w.access_num,w.last_access_date,w.create_date,u.username
+        from t_website w inner join t_user u on u.id = w.create_user_id inner join
+        t_website_type twt on w.type_id = twt.id
+        <where>
+            <if test="name!=null and name!=''">
+                w.name like  CONCAT('%',#{name},'%')
+            </if>
+            <if test="userName!=null and userName!=''">
+                or u.username like  CONCAT('%',#{userName},'%')
+            </if>
+        </where>
+    </select>
+</mapper>
